@@ -444,6 +444,38 @@
   .reveal-delay-2 { transition-delay: 0.2s; }
   .reveal-delay-3 { transition-delay: 0.3s; }
   .reveal-delay-4 { transition-delay: 0.4s; }
+
+  /* ── Cookie consent banner ─────────────────────────────────────── */
+  #cookie-banner {
+    position: fixed; bottom: 0; left: 0; right: 0; z-index: 200;
+    background: var(--slate2);
+    border-top: 1px solid rgba(255,255,255,0.08);
+    padding: 16px var(--pad);
+    display: none;
+    align-items: center; justify-content: space-between;
+    gap: 24px; flex-wrap: wrap;
+    box-shadow: 0 -4px 24px rgba(0,0,0,0.15);
+  }
+  #cookie-banner p {
+    font-size: 0.85rem; color: rgba(255,255,255,0.65);
+    margin: 0; font-weight: 300; flex: 1; min-width: 200px;
+  }
+  #cookie-banner p a { color: var(--flamingo); text-decoration: underline; }
+  .cookie-actions { display: flex; gap: 10px; flex-shrink: 0; }
+  #cookie-accept {
+    background: var(--coral); color: var(--white);
+    border: none; border-radius: 6px; padding: 9px 20px;
+    font-family: var(--font-body); font-size: 0.85rem; font-weight: 600;
+    cursor: pointer; transition: background 0.2s;
+  }
+  #cookie-accept:hover { background: #c44e70; }
+  #cookie-decline {
+    background: transparent; color: rgba(255,255,255,0.5);
+    border: 1px solid rgba(255,255,255,0.2); border-radius: 6px; padding: 9px 20px;
+    font-family: var(--font-body); font-size: 0.85rem; font-weight: 400;
+    cursor: pointer; transition: all 0.2s;
+  }
+  #cookie-decline:hover { color: rgba(255,255,255,0.8); border-color: rgba(255,255,255,0.4); }
 </style>
   <!-- SEO + Open Graph -->
   <meta name="description" content="Sebastian Weirsøe Flamant — digital leader, ecommerce director, product builder and comic translator. Based in Copenhagen.">
@@ -453,8 +485,21 @@
   <meta property="og:url" content="https://flamant.dk">
   <meta property="og:title" content="Sebastian Weirsøe Flamant — Digital Leader &amp; Product Builder">
   <meta property="og:description" content="Digital leader, ecommerce director, product builder and comic translator. 20+ years building things that work. Copenhagen.">
-  <!-- Plausible Analytics — privacy-first, no cookies, GDPR compliant -->
-  <script defer data-domain="flamant.dk" src="https://plausible.io/js/script.js"></script>
+  <!-- Google Analytics — loads only after cookie consent -->
+  <script>
+    function loadGA() {
+      var s = document.createElement('script');
+      s.src = 'https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX';
+      s.async = true;
+      document.head.appendChild(s);
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      window.gtag = gtag;
+      gtag('js', new Date());
+      gtag('config', 'G-XXXXXXXXXX');
+    }
+    if (document.cookie.indexOf('consent=yes') !== -1) { loadGA(); }
+  </script>
 </head>
 <body>
 
@@ -1797,6 +1842,15 @@
   </div>
 </footer>
 
+<!-- ── Cookie consent banner ────────────────────────────────────────── -->
+<div id="cookie-banner" role="dialog" aria-label="Cookie consent">
+  <p>This site uses Google Analytics to understand how people find and use it. No personal data is sold or shared. <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Privacy policy</a></p>
+  <div class="cookie-actions">
+    <button id="cookie-accept">Accept</button>
+    <button id="cookie-decline">Decline</button>
+  </div>
+</div>
+
 <script>
 (function() {
   // Hamburger menu toggle
@@ -1869,6 +1923,23 @@
         btn.disabled = false;
         error.style.display = 'block';
       });
+    });
+  })();
+
+  // Cookie consent
+  (function() {
+    var banner = document.getElementById('cookie-banner');
+    if (document.cookie.indexOf('consent=') === -1) {
+      banner.style.display = 'flex';
+    }
+    document.getElementById('cookie-accept').addEventListener('click', function() {
+      document.cookie = 'consent=yes; max-age=31536000; path=/; SameSite=Lax';
+      banner.style.display = 'none';
+      loadGA();
+    });
+    document.getElementById('cookie-decline').addEventListener('click', function() {
+      document.cookie = 'consent=no; max-age=31536000; path=/; SameSite=Lax';
+      banner.style.display = 'none';
     });
   })();
 })();
