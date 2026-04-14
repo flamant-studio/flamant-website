@@ -1,8 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "mcp__Claude_Preview__preview_start",
-      "Bash(python3 replace_base64.py)"
-    ]
-  }
-}
